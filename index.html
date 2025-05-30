@@ -580,10 +580,14 @@
     </div>
 
     <script>
+	//copy email to clipboard
 	function Email() {
-    event.preventDefault();
-    event.stopPropagation();
-    window.location.href = 'mailto:petercsontos29@gmail.com';
+    		navigator.clipboard.writeText('petercsontos29@gmail.com').then(function() {
+        		alert('Email copied to clipboard!');
+    		}, function(err) {
+        	// Fallback for older browsers
+       		 aler('Failed to copy to clipboard the email!');
+    		});
 	}
         // Theme state (removed localStorage to avoid sandbox error)
         let isDarkMode = true; // Default to dark mode
