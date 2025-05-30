@@ -564,7 +564,7 @@
                         <h3>Github</h3>
 			<p>My projects</p>
                     </div>
-		    <div class="contact-item" onclick="window.location.href='mailto:petercsontos29@gmail.com'">
+		    <div class="contact-item" onclick="Email()">
                         <span class="contact-icon">📧</span>
                         <h3>Email</h3>
                         <p>If you want to contact me</p>
@@ -580,6 +580,11 @@
     </div>
 
     <script>
+	function Email() {
+    event.preventDefault();
+    event.stopPropagation();
+    window.location.href = 'mailto:petercsontos29@gmail.com';
+	}
         // Theme state (removed localStorage to avoid sandbox error)
         let isDarkMode = true; // Default to dark mode
 
