@@ -65,11 +65,47 @@
             color: white;
             position: relative;
             overflow: hidden;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .light-mode .hero {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: black;
+        }
+
+        .hero p {
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        .light-mode .hero p {
+            color: black;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            color: white;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .light-mode .hero h1 {
+            color: black;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        .light-mode .hero .subtitle {
+            color: black;
         }
 
         .hero::before {
@@ -366,20 +402,60 @@
             font-size: 20px;
         }
 
+        /* Fixed paragraph styling for all sections */
         .section p {
             color: #b0b8c5;
+            transition: color 0.3s ease;
         }
 
+        /* Light mode general paragraphs */
         .light-mode .section p {
-            color: #555;
+            color: #333333;
         }
 
+        /* About section paragraph - Dark mode */
+        .card .section p.about {
+            font-size: 1.1rem !important; 
+            color: #cfcfcf !important; 
+            line-height: 1.8 !important;
+            transition: color 0.3s ease !important;
+        }
+
+        /* About section paragraph - Light mode - HIGHEST SPECIFICITY */
+        body.light-mode .card .section p.about {
+            font-size: 1.1rem !important; 
+            color: #333333 !important;
+            line-height: 1.8 !important;
+            transition: color 0.3s ease !important;
+        }
+
+        /* Fixed h3 styling */
         .section h3 {
             color: #e0e6ed;
+            transition: color 0.3s ease;
         }
 
         .light-mode .section h3 {
             color: #2c3e50;
+        }
+
+        /* Fixed styling for development tools section */
+        .section h2.dev-tools {
+            margin: 30px 0 20px 0; 
+            color: #484da9;
+        }
+
+        .light-mode .section h2.dev-tools {
+            color: #2c3e50;
+        }
+
+        .section p.dev-tools-text {
+            font-size: 1.1rem; 
+            color: #acacac;
+        }
+
+        .light-mode .section p.dev-tools-text {
+            color: #333333;
         }
 
         @media (max-width: 768px) {
@@ -441,7 +517,7 @@
         <div class="card">
             <div class="section">
                 <h2>About Me</h2>
-                <p style="font-size: 1.1rem; color: #cfcfcf; line-height: 1.8;">
+                <p class="about" style="font-size: 1.1rem; line-height: 1.8;">
                     I'm a passionate Computer Engineering undergraduate student at Budapest University of Technology and Economics, 
                     based in Budapest. I have a strong foundation in multiple programming languages and technologies, 
                     with particular interests in cutting-edge fields like machine learning, quantum computing, and graphics programming. 
@@ -495,10 +571,14 @@
                         <div class="skill-name">Assembly</div>
                         <div class="skill-level">Beginner</div>
                     </div>
+                    <div class="skill-item">
+                        <div class="skill-name">Go</div>
+                        <div class="skill-level">Beginner</div>
+                    </div>
                 </div>
 
-                <h2 style="margin: 30px 0 20px 0; color: #484da9;">Development Tools</h2>
-                <p style="font-size: 1.1rem; color: #acacac;">
+                <h2 class="dev-tools">Development Tools</h2>
+                <p class="dev-tools-text">
                     <strong>Primary Editor:</strong> Neovim<br>
                     <strong>Also experienced with:</strong> Visual Studio Code, Visual Studio
                 </p>
@@ -566,12 +646,12 @@
 		    <div class="contact-item" onclick="window.open('https://github.com/lpcsontos','github_page');">
 			<span class="contact-icon">💻</span>
                         <h3>Github</h3>
-			<p>My projects</p>
+			<p>My projects <br>click here for it</p>
                     </div>
 		    <div class="contact-item" onclick="Email()">
                         <span class="contact-icon">📧</span>
                         <h3>Email</h3>
-                        <p>If you want to contact me</p>
+                        <p>If you want to contact me click here</p>
                     </div>
                 </div>
             </div>
@@ -590,11 +670,22 @@
         		alert('Email copied to clipboard!');
     		}, function(err) {
         	// Fallback for older browsers
-       		 aler('Failed to copy to clipboard the email!');
+       		 alert('Failed to copy to clipboard the email!');
     		});
 	}
-        // Theme state (removed localStorage to avoid sandbox error)
-        let isDarkMode = true; // Default to dark mode
+
+        // Function to detect browser's preferred color scheme
+        function getBrowserThemePreference() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                return 'light';
+            }
+            return 'dark'; // Default fallback
+        }
+
+        // Initialize theme based on browser preference
+        let isDarkMode = getBrowserThemePreference() === 'dark';
 
         // Theme toggle functionality
         function toggleTheme() {
@@ -614,9 +705,45 @@
             }
         }
 
-        // Load page with dark mode as default
+        // Listen for changes in browser color scheme preference
+        if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addListener(function(e) {
+                // Only auto-switch if user hasn't manually toggled
+                if (!window.userHasToggledTheme) {
+                    isDarkMode = e.matches;
+                    updateThemeUI();
+                }
+            });
+        }
+
+        // Function to update UI based on current theme
+        function updateThemeUI() {
+            const body = document.body;
+            const themeButton = document.querySelector('.theme-toggle');
+            
+            if (isDarkMode) {
+                body.classList.remove('light-mode');
+                themeButton.innerHTML = '☀️';
+                themeButton.title = 'Toggle Light Mode';
+            } else {
+                body.classList.add('light-mode');
+                themeButton.innerHTML = '🌙';
+                themeButton.title = 'Toggle Dark Mode';
+            }
+        }
+
+        // Mark when user manually toggles theme
+        function toggleTheme() {
+            window.userHasToggledTheme = true;
+            isDarkMode = !isDarkMode;
+            updateThemeUI();
+        }
+
+        // Load page with browser's preferred color scheme
         document.addEventListener('DOMContentLoaded', function() {
-            // Dark mode is already default, no need to change anything
+            // Set initial theme based on browser preference
+            updateThemeUI();
             
             // Animate skill items on scroll
             const observerOptions = {
